@@ -2,867 +2,111 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prayer Monitor</title>
-
 <style>
-*{
-  box-sizing:border-box;
-}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:#f4f7fb;
-  color:#18212f;
-  font-family:Arial,"Noto Sans Malayalam",sans-serif;
-}
-
-body{
-  padding:16px;
-}
-
-.loading{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#f4f7fb;
-  z-index:10;
-}
-
-.loader-box{
-  text-align:center;
-}
-
-.loader-icon{
-  font-size:50px;
-  animation:pulse 1.2s infinite;
-}
-
-.loader-text{
-  margin-top:10px;
-  color:#475569;
-  font-weight:700;
-}
-
-@keyframes pulse{
-  0%,100%{
-    transform:scale(.95);
-    opacity:.7;
-  }
-
-  50%{
-    transform:scale(1.08);
-    opacity:1;
-  }
-}
-
-.wrap{
-  width:100%;
-  max-width:520px;
-  margin:auto;
-  padding:2px;
-}
-
-.card{
-  background:#fff;
-  border-radius:22px;
-  padding:20px;
-  box-shadow:0 10px 35px #00000012;
-}
-
-h1{
-  font-size:23px;
-  margin:0 0 7px;
-}
-
-.sub{
-  color:#64748b;
-  margin-bottom:18px;
-  font-size:14px;
-}
-
-.student{
-  background:#eef6ff;
-  border-radius:16px;
-  padding:14px;
-  margin:14px 0;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  gap:14px;
-}
-
-.label{
-  color:#64748b;
-}
-
-.value{
-  font-weight:700;
-  text-align:right;
-}
-
-.prayer{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
-  margin:9px 0;
-  background:#fff;
-}
-
-.prayer input{
-  width:22px;
-  height:22px;
-  accent-color:#166534;
-  flex:none;
-}
-
-.prayer input:disabled{
-  opacity:1;
-}
-
-.prayer label{
-  flex:1;
-  font-size:17px;
-}
-
-.prayer-date{
-  display:block;
-  font-size:12px;
-  color:#64748b;
-  margin-top:3px;
-}
-
-.btn{
-  width:100%;
-  border:0;
-  border-radius:14px;
-  padding:15px;
-  font-size:17px;
-  font-weight:700;
-  background:#166534;
-  color:white;
-  margin-top:15px;
-  cursor:pointer;
-}
-
-.btn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-
-.msg{
-  padding:12px;
-  border-radius:12px;
-  margin:12px 0;
-  display:none;
-  line-height:1.5;
-}
-
-.error{
-  background:#fee2e2;
-  color:#991b1b;
-}
-
-.success{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.closed{
-  background:#fff7ed;
-  color:#9a3412;
-  padding:13px;
-  border-radius:12px;
-  margin-top:12px;
-}
-
-.cycle{
-  font-weight:800;
-  font-size:18px;
-  margin:8px 0 12px;
-}
-
-@media(max-width:380px){
-
-  body{
-    padding:10px;
-  }
-
-  .card{
-    padding:16px;
-    border-radius:18px;
-  }
-
-  h1{
-    font-size:21px;
-  }
-
-  .prayer{
-    padding:12px;
-  }
-
-  .prayer label{
-    font-size:16px;
-  }
-}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,"Noto Sans Malayalam",sans-serif;background:#f4f7fb;color:#172033}
+.app{width:100%;max-width:520px;margin:auto;min-height:100vh;padding:18px}.card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 8px 30px rgba(20,35,60,.1)}
+.brand{text-align:center;font-weight:800;font-size:21px}.subtitle{text-align:center;color:#697386;font-size:13px;margin:5px 0 20px}
+.student{background:#f1f6ff;border-radius:16px;padding:15px;margin-bottom:18px}.student-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0}
+.label{color:#697386;font-size:13px}.value{font-weight:700;text-align:right}.cycle{text-align:center;font-size:14px;font-weight:700;margin:15px 0}
+.prayer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px;border:1px solid #e5e9f0;border-radius:15px;margin-bottom:10px;background:#fff}
+.prayer.locked{background:#f1f8f3;border-color:#bfe3c8}.prayer-info{flex:1}.prayer-name{font-size:17px;font-weight:800}.prayer-date{font-size:12px;color:#7a8494;margin-top:4px}
+input[type=checkbox]{width:25px;height:25px;accent-color:#16834b}button{width:100%;border:0;border-radius:15px;padding:15px;margin-top:10px;background:#1677ff;color:white;font-size:16px;font-weight:800;cursor:pointer}
+button:disabled{opacity:.6}.status{text-align:center;margin-top:13px;min-height:20px;font-size:14px}.error{color:#c62828}.success{color:#16834b}.loading{text-align:center;padding:40px 10px;color:#697386}
 </style>
 </head>
-
 <body>
-
-<div id="loading" class="loading">
-  <div class="loader-box">
-    <div class="loader-icon">🕌</div>
-    <div class="loader-text">
-      നിസ്കാരം മോണിറ്ററിംഗ്
-    </div>
-  </div>
+<div class="app"><div class="card">
+<div class="brand">HIMAYATHUL ISLAM MADRASA</div>
+<div class="subtitle">NADUVATHUR • Prayer Monitor</div>
+<div id="loading" class="loading">ലോഡ് ചെയ്യുന്നു...</div>
+<div id="content" style="display:none">
+<div class="student">
+<div class="student-row"><span class="label">പേര്</span><span class="value" id="studentName"></span></div>
+<div class="student-row"><span class="label">Entrance No</span><span class="value" id="studentId"></span></div>
+<div class="student-row"><span class="label">Class</span><span class="value" id="studentClass"></span></div>
 </div>
-
-
-<div class="wrap">
-
-  <div class="card">
-
-    <h1>
-      🕌 നിസ്കാരം മോണിറ്ററിംഗ്
-    </h1>
-
-    <div class="sub">
-      വിദ്യാർത്ഥിയുടെ നിസ്കാരം രേഖപ്പെടുത്തുക
-    </div>
-
-    <div id="message" class="msg"></div>
-
-    <div id="app"></div>
-
-  </div>
-
-</div>
-
+<div class="cycle" id="cycle"></div><div id="prayers"></div>
+<button id="submitBtn" onclick="submitPrayers()">Submit</button><div id="status" class="status"></div>
+</div></div></div>
 
 <script>
+const API_URL='https://script.google.com/macros/s/AKfycbxqrPbBbo_MuLlOIfjBuzr95WqqBM3QMV8AYuI0JmPZwhX5ahOH5l9QyzXYae2alKDh/exec';
+const studentId=new URLSearchParams(location.search).get('id')||'';
+const prayerKeys=['Dhuhr','Asr','Maghrib','Isha','Fajr'];
+let currentRecord={Dhuhr:false,Asr:false,Maghrib:false,Isha:false,Fajr:false};
 
-/*
-=========================================================
-GOOGLE APPS SCRIPT WEB APP URL
-=========================================================
-*/
-
-const API_URL =
-'https://script.google.com/macros/s/AKfycbxqrPbBbo_MuLlOIfjBuzr95WqqBM3QMV8AYuI0JmPZwhX5ahOH5l9QyzXYae2alKDh/exec';
-
-
-/*
-=========================================================
-GET STUDENT ID
-=========================================================
-*/
-
-const params =
-new URLSearchParams(
-  window.location.search
-);
-
-const studentId =
-(params.get('id') || '').trim();
-
-
-/*
-=========================================================
-LOADING
-=========================================================
-*/
-
-function hideLoading(){
-
-  const el =
-  document.getElementById('loading');
-
-  if(el){
-    el.style.display='none';
-  }
+function api(action,data={}){
+ return new Promise((resolve,reject)=>{
+  const callback='cb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+  const params=new URLSearchParams({action,callback,...data});
+  const script=document.createElement('script');
+  const timer=setTimeout(()=>{cleanup();reject(new Error('API timeout'))},20000);
+  function cleanup(){clearTimeout(timer);script.remove();delete window[callback]}
+  window[callback]=r=>{cleanup();resolve(r)};
+  script.onerror=()=>{cleanup();reject(new Error('API connection failed'))};
+  script.src=API_URL+'?'+params.toString();document.body.appendChild(script);
+ });
 }
-
-
-/*
-=========================================================
-MESSAGE
-=========================================================
-*/
-
-function showMsg(text,type){
-
-  const el =
-  document.getElementById('message');
-
-  el.textContent=text;
-
-  el.className='msg '+type;
-
-  el.style.display='block';
-}
-
-
-/*
-=========================================================
-HTML ESCAPE
-=========================================================
-*/
-
-function esc(s){
-
-  return String(s ?? '')
-    .replace(
-      /[&<>"']/g,
-      m=>({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#039;'
-      }[m])
-    );
-}
-
-
-/*
-=========================================================
-API CALL
-=========================================================
-*/
-
-function api(
-  action,
-  data={},
-  timeoutMs=15000
-){
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const callbackName =
-      '__namazApi_' +
-      Date.now() +
-      '_' +
-      Math.floor(
-        Math.random()*100000
-      );
-
-
-      const query =
-      new URLSearchParams();
-
-
-      query.set(
-        'action',
-        action
-      );
-
-
-      query.set(
-        'callback',
-        callbackName
-      );
-
-
-      Object.keys(data)
-      .forEach(key=>{
-
-        const value =
-        data[key];
-
-        if(
-          value !== undefined &&
-          value !== null
-        ){
-
-          query.set(
-            key,
-            String(value)
-          );
-        }
-
-      });
-
-
-      const script =
-      document.createElement(
-        'script'
-      );
-
-
-      const timer =
-      setTimeout(()=>{
-
-        cleanup();
-
-        reject(
-          new Error(
-            'API request timed out.'
-          )
-        );
-
-      },timeoutMs);
-
-
-      function cleanup(){
-
-        clearTimeout(timer);
-
-        delete window[
-          callbackName
-        ];
-
-        if(
-          script.parentNode
-        ){
-
-          script.parentNode
-          .removeChild(script);
-
-        }
-      }
-
-
-      window[
-        callbackName
-      ] =
-      (result)=>{
-
-        cleanup();
-
-        resolve(result);
-
-      };
-
-
-      script.onerror=()=>{
-
-        cleanup();
-
-        reject(
-          new Error(
-            'API connection failed.'
-          )
-        );
-
-      };
-
-
-      script.src =
-      API_URL +
-      (
-        API_URL.includes('?')
-          ? '&'
-          : '?'
-      ) +
-      query.toString();
-
-
-      document.body.appendChild(
-        script
-      );
-
-    }
-  );
-}
-
-
-/*
-=========================================================
-RENDER
-=========================================================
-*/
-
-function render(data){
-
-  hideLoading();
-
-
-  if(
-    !data ||
-    !data.ok
-  ){
-
-    showMsg(
-      data && data.message
-        ? data.message
-        : 'Student information ലഭ്യമല്ല.',
-      'error'
-    );
-
-    return;
-  }
-
-
-  const s =
-  data.student;
-
-
-  const r =
-  data.record || {};
-
-
-  const c =
-  data.cycle;
-
-
-  let html = `
-
-    <div class="student">
-
-      <div class="row">
-
-        <span class="label">
-          പേര്
-        </span>
-
-        <span class="value">
-          ${esc(s.name)}
-        </span>
-
-      </div>
-
-
-      <div class="row">
-
-        <span class="label">
-          ID
-        </span>
-
-        <span class="value">
-          ${esc(s.id)}
-        </span>
-
-      </div>
-
-
-      <div class="row">
-
-        <span class="label">
-          ക്ലാസ്
-        </span>
-
-        <span class="value">
-          ${esc(s.className)}
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="cycle">
-      📅 ${esc(c.cycleDateLabel)}
-    </div>
-
-  `;
-
-
-  /*
-  =======================================================
-  EACH PRAYER
-
-  TRUE  = checked + locked
-  FALSE = available for ticking
-  =======================================================
-  */
-
-
-  c.prayers.forEach(p=>{
-
-    const isLocked =
-    r[p.key] === true;
-
-
-    html += `
-
-      <div class="prayer">
-
-        <input
-          id="${p.key}"
-          type="checkbox"
-
-          ${
-            isLocked
-              ? 'checked disabled'
-              : ''
-          }
-        >
-
-
-        <label
-          for="${p.key}"
-        >
-
-          ${esc(p.label)}
-
-          <span class="prayer-date">
-            ${esc(p.dateLabel)}
-          </span>
-
-        </label>
-
-      </div>
-
-    `;
-
-  });
-
-
-  /*
-  =======================================================
-  BUTTON
-
-  Even after some prayers are locked,
-  remaining prayers can still be submitted.
-  =======================================================
-  */
-
-  html += `
-
-    <button
-      id="submit"
-      class="btn"
-    >
-      SUBMIT
-    </button>
-
-  `;
-
-
-  document.getElementById(
-    'app'
-  ).innerHTML = html;
-
-
-  document.getElementById(
-    'submit'
-  ).onclick = submit;
-
-}
-
-
-/*
-=========================================================
-SUBMIT
-=========================================================
-*/
-
-async function submit(){
-
-  const btn =
-  document.getElementById(
-    'submit'
-  );
-
-
-  /*
-    Prevent double clicking
-    while request is running.
-  */
-
-  btn.disabled=true;
-
-  btn.textContent=
-    'SUBMITTING...';
-
-
-  const payload={
-
-    studentId:
-      studentId,
-
-    Dhuhr:
-      document.getElementById(
-        'Dhuhr'
-      ).checked,
-
-    Asr:
-      document.getElementById(
-        'Asr'
-      ).checked,
-
-    Maghrib:
-      document.getElementById(
-        'Maghrib'
-      ).checked,
-
-    Isha:
-      document.getElementById(
-        'Isha'
-      ).checked,
-
-    Fajr:
-      document.getElementById(
-        'Fajr'
-      ).checked
-  };
-
-
-  try{
-
-    const res =
-    await api(
-      'submitPrayers',
-      payload
-    );
-
-
-    if(
-      res &&
-      res.ok
-    ){
-
-      showMsg(
-        res.message,
-        'success'
-      );
-
-
-      /*
-        Reload data.
-
-        Previously TRUE prayers
-        will now appear disabled.
-      */
-
-      await load();
-
-    }
-    else{
-
-      showMsg(
-        res && res.message
-          ? res.message
-          : 'Submit ചെയ്യാൻ കഴിഞ്ഞില്ല.',
-        'error'
-      );
-
-
-      btn.disabled=false;
-
-      btn.textContent=
-        'SUBMIT';
-    }
-
-  }
-  catch(e){
-
-    showMsg(
-      'Server Error: ' +
-      (
-        e && e.message
-          ? e.message
-          : e
-      ),
-      'error'
-    );
-
-
-    btn.disabled=false;
-
-    btn.textContent=
-      'SUBMIT';
-  }
-}
-
-
-/*
-=========================================================
-LOAD
-=========================================================
-*/
 
 async function load(){
-
-  if(!studentId){
-
-    hideLoading();
-
-    showMsg(
-      'Student ID ലഭ്യമല്ല.',
-      'error'
-    );
-
-    return;
-  }
-
-
-  if(
-    !API_URL ||
-    API_URL.includes(
-      'PASTE_YOUR_'
-    )
-  ){
-
-    hideLoading();
-
-    showMsg(
-      'Google Apps Script API URL index.html-ൽ ചേർത്തിട്ടില്ല.',
-      'error'
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const data =
-    await api(
-      'getPrayerRecord',
-      {
-        studentId:
-          studentId
-      }
-    );
-
-
-    render(data);
-
-  }
-  catch(e){
-
-    hideLoading();
-
-    showMsg(
-      'Server Error: ' +
-      (
-        e && e.message
-          ? e.message
-          : e
-      ),
-      'error'
-    );
-
-  }
+ if(!studentId){showError('Student ID ലഭ്യമല്ല.');return}
+ try{
+  const result=await api('getPrayerRecord',{studentId});
+  if(!result||!result.ok){showError(result?.message||'Student വിവരങ്ങൾ ലഭ്യമല്ല.');return}
+  render(result);
+ }catch(e){showError('Connection error. വീണ്ടും ശ്രമിക്കുക.')}
 }
 
+function render(result){
+ document.getElementById('loading').style.display='none';
+ document.getElementById('content').style.display='block';
+ document.getElementById('studentName').textContent=result.student.name;
+ document.getElementById('studentId').textContent=result.student.id;
+ document.getElementById('studentClass').textContent=result.student.className;
+ document.getElementById('cycle').textContent='Cycle: '+result.cycle.cycleDateLabel;
 
-/*
-=========================================================
-START
-=========================================================
-*/
+ currentRecord={Dhuhr:!!result.record.Dhuhr,Asr:!!result.record.Asr,Maghrib:!!result.record.Maghrib,Isha:!!result.record.Isha,Fajr:!!result.record.Fajr};
+ const container=document.getElementById('prayers');container.innerHTML='';
 
-window.addEventListener(
-  'load',
-  load
-);
+ result.cycle.prayers.forEach(p=>{
+  const locked=currentRecord[p.key]===true;
+  const div=document.createElement('div');
+  div.className='prayer'+(locked?' locked':'');
+  div.innerHTML='<div class="prayer-info"><div class="prayer-name">'+escapeHtml(p.label)+'</div><div class="prayer-date">'+escapeHtml(p.dateLabel)+'</div></div><input type="checkbox" id="'+p.key+'" '+(locked?'checked disabled':'')+'>';
+  container.appendChild(div);
+ });
+ document.getElementById('status').textContent='';
+}
 
+async function submitPrayers(){
+ const btn=document.getElementById('submitBtn'),status=document.getElementById('status');
+ const payload={studentId};let selectedNew=false;
+
+ prayerKeys.forEach(key=>{
+  const checkbox=document.getElementById(key);
+  const newlySelected=checkbox&&!checkbox.disabled&&checkbox.checked&&!currentRecord[key];
+  payload[key]=newlySelected;if(newlySelected)selectedNew=true;
+ });
+
+ if(!selectedNew){status.className='status error';status.textContent='പുതിയ നിസ്കാരം തിരഞ്ഞെടുക്കപ്പെട്ടിട്ടില്ല.';return}
+ btn.disabled=true;btn.textContent='Saving...';status.className='status';status.textContent='';
+
+ try{
+  const result=await api('submitPrayers',payload);
+  if(!result||!result.ok){status.className='status error';status.textContent=result?.message||'Save failed.';btn.disabled=false;btn.textContent='Submit';return}
+  status.className='status success';status.textContent=result.message||'Saved.';
+  setTimeout(load,700);
+ }catch(e){
+  status.className='status error';status.textContent='Connection error. വീണ്ടും ശ്രമിക്കുക.';
+  btn.disabled=false;btn.textContent='Submit';
+ }
+}
+
+function showError(message){document.getElementById('loading').innerHTML='<div class="error">'+escapeHtml(message)+'</div>'}
+function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+load();
 </script>
-
 </body>
 </html>
