@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer Monitor</title>
+
+  <script>
+    const WEB_APP_URL =
+      "https://script.google.com/macros/s/AKfycbxa2GuXobBYGNpl92kMshAIGG29tEwxvgqqax2zmxbu3ISk-waTD-qJjJeWkbqkH_XY/exec";
+
+    // Example:
+    // https://alphaacademy2.github.io/namaz/1017
+    //                       ↓
+    // Google Apps Script
+    // ?id=1017
+
+    const path = window.location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    const studentId = parts.length ? parts[parts.length - 1] : "";
+
+    if (/^\d+$/.test(studentId)) {
+      window.location.replace(
+        WEB_APP_URL + "?id=" + encodeURIComponent(studentId)
+      );
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.innerHTML = `
+          <div style="
+            font-family:Arial,sans-serif;
+            text-align:center;
+            padding:50px 20px;
+            color:#334155;
+          ">
+            <h2>Student ID not found</h2>
+            <p>QR code link is invalid.</p>
+          </div>
+        `;
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <div style="
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:50px 20px;
+    color:#64748b;
+  ">
+    Loading...
+  </div>
+</body>
+</html>
