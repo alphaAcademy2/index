@@ -1,287 +1,34 @@
-<!DOCTYPE html>
-<html lang="ml">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prayer Monitor · HIMAYATHUL ISLAM MADRASA</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{min-height:100vh;font-family:'Inter','Noto Sans Malayalam',-apple-system,BlinkMacSystemFont,sans-serif;background:radial-gradient(circle at 10% 20%,#f0f6ff 0%,#e6edf8 100%);color:#172033;display:flex;align-items:flex-start;justify-content:center;padding:1rem;line-height:1.5;-webkit-font-smoothing:antialiased}
-    .app{width:100%;max-width:520px;margin:0 auto;padding:1.5rem 0}
-    .card{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2.2rem;padding:2rem 1.8rem;box-shadow:0 25px 50px -12px rgba(20,35,60,.25),0 0 0 1px rgba(255,255,255,.7) inset,0 0 0 1px rgba(255,255,255,.9) inset;border:1px solid rgba(255,255,255,.8);animation:cardFade .6s cubic-bezier(.16,1,.3,1)}
-    @keyframes cardFade{0%{opacity:0;transform:translateY(16px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
-    .brand{text-align:center;font-weight:800;font-size:1.35rem;letter-spacing:-.01em;color:#0b1b33;display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
-    .brand i{color:#1677ff;font-size:1.4rem}
-    .subtitle{text-align:center;color:#697386;font-size:.85rem;margin:.4rem 0 1.8rem;display:flex;align-items:center;justify-content:center;gap:.5rem;font-weight:500;letter-spacing:.02em}
-    .subtitle i{color:#94a3b8;font-size:.75rem}
-    .student{background:linear-gradient(145deg,#f5f9ff,#eef4fc);border-radius:1.4rem;padding:1.2rem 1.4rem;margin-bottom:1.6rem;border:1px solid rgba(255,255,255,.9);box-shadow:0 4px 12px rgba(0,0,0,.02),0 0 0 1px rgba(22,119,255,.08)}
-    .student-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.5rem 0;border-bottom:1px solid rgba(148,163,184,.15)}
-    .student-row:last-child{border-bottom:none;padding-bottom:0}
-    .student-row:first-child{padding-top:0}
-    .label{color:#5e6b7e;font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:.4rem}
-    .label i{color:#94a3b8;font-size:.75rem;width:1rem}
-    .value{font-weight:700;text-align:right;color:#0f1a2e;font-size:.95rem}
-    .cycle-wrapper{display:flex;justify-content:center}
-    .cycle{text-align:center;font-size:.85rem;font-weight:700;margin:1.2rem 0;padding:.7rem 1.2rem;background:linear-gradient(135deg,#eef6ff,#fff);border-radius:100px;display:inline-block;border:1px solid #d9e6ff;color:#1e4e8c;box-shadow:0 2px 8px rgba(22,119,255,.06);letter-spacing:.02em}
-    .cycle i{margin-right:.5rem;color:#1677ff;font-size:.85rem}
-    #prayers{margin-top:.5rem}
-    .prayer{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.2rem;border:1px solid #e5e9f0;border-radius:1.2rem;margin-bottom:.8rem;background:#fff;transition:all .2s ease;box-shadow:0 2px 6px rgba(0,0,0,.01)}
-    .prayer:hover{border-color:#cbd9ec;box-shadow:0 4px 12px rgba(22,119,255,.06);transform:translateY(-1px)}
-    .prayer.locked{background:linear-gradient(145deg,#f2faf5,#eaf7ef);border-color:#bfe3c8}
-    .prayer-info{flex:1}
-    .prayer-name{font-size:1.05rem;font-weight:700;color:#0b1b33;display:flex;align-items:center;gap:.5rem}
-    .prayer-name i{color:#1677ff;font-size:.9rem;width:1.2rem}
-    .prayer.locked .prayer-name i{color:#16834b}
-    .prayer-date{font-size:.7rem;color:#7a8494;margin-top:.25rem;display:flex;align-items:center;gap:.4rem;font-weight:500}
-    .prayer-date i{font-size:.65rem;color:#a0aec0}
-    input[type=checkbox]{width:1.6rem;height:1.6rem;accent-color:#16834b;cursor:pointer;border-radius:.4rem;flex-shrink:0;transition:all .15s ease}
-    input[type=checkbox]:disabled{opacity:.8;cursor:not-allowed}
-    input[type=checkbox]:not(:disabled):hover{transform:scale(1.05)}
-    button{width:100%;border:0;border-radius:1.2rem;padding:1rem;margin-top:1rem;background:linear-gradient(145deg,#1677ff,#0b5ed7);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:all .25s ease;box-shadow:0 8px 20px -6px rgba(22,119,255,.4);display:flex;align-items:center;justify-content:center;gap:.6rem;letter-spacing:.01em;font-family:'Inter','Noto Sans Malayalam',sans-serif}
-    button i{font-size:1rem}
-    button:hover:not(:disabled){background:linear-gradient(145deg,#0b5ed7,#0a4fb5);transform:translateY(-2px);box-shadow:0 12px 24px -8px rgba(22,119,255,.5)}
-    button:active:not(:disabled){transform:translateY(0);box-shadow:0 4px 12px -4px rgba(22,119,255,.4)}
-    button:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:0 4px 12px -4px rgba(22,119,255,.2)}
-    .status{text-align:center;margin-top:1rem;min-height:1.8rem;font-size:.85rem;font-weight:500;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.4rem .8rem;border-radius:2rem;transition:all .3s ease}
-    .status.error{color:#b91c1c;background:#fef2f2;border:1px solid #fecaca}
-    .status.success{color:#166534;background:#f0fdf4;border:1px solid #bbf7d0}
-    .loading{text-align:center;padding:3rem 1rem;color:#697386;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:1rem;font-size:.95rem}
-    .loading i{font-size:2.2rem;color:#1677ff;animation:spin 1.4s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .error{color:#b91c1c;background:#fef2f2;padding:.8rem 1.2rem;border-radius:1rem;border:1px solid #fecaca;font-weight:500;display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem}
-    .error i{color:#dc2626}
-    @media(max-width:480px){.card{padding:1.5rem 1.2rem;border-radius:1.8rem}.brand{font-size:1.15rem}.prayer{padding:.9rem 1rem}.prayer-name{font-size:.95rem}.value{font-size:.85rem}}
-    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.loading i{animation:none}}
-  </style>
-</head>
-<body>
-
-<div class="app">
-  <div class="card">
-    <div class="brand">
-      <i class="fas fa-mosque"></i>
-      HIMAYATHUL ISLAM MADRASA
-    </div>
-    <div class="subtitle">
-      <i class="fas fa-location-dot"></i>
-      NADUVATHUR · Prayer Monitor
-      <i class="fas fa-circle" style="font-size:.25rem"></i>
-    </div>
-
-    <div id="loading" class="loading">
-      <i class="fas fa-spinner"></i>
-      ലോഡ് ചെയ്യുന്നു...
-    </div>
-
-    <div id="content" style="display:none">
-      <div class="student">
-        <div class="student-row">
-          <span class="label"><i class="fas fa-user"></i> പേര്</span>
-          <span class="value" id="studentName"></span>
-        </div>
-        <div class="student-row">
-          <span class="label"><i class="fas fa-id-card"></i> Entrance No</span>
-          <span class="value" id="studentId"></span>
-        </div>
-        <div class="student-row">
-          <span class="label"><i class="fas fa-graduation-cap"></i> Class</span>
-          <span class="value" id="studentClass"></span>
-        </div>
-      </div>
-
-      <div class="cycle-wrapper">
-        <div class="cycle" id="cycle"></div>
-      </div>
-
-      <div id="prayers"></div>
-
-      <button id="submitBtn" onclick="submitPrayers()">
-        <i class="fas fa-check-circle"></i> Submit
-      </button>
-
-      <div id="status" class="status"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxqrPbBbo_MuLlOIfjBuzr95WqqBM3QMV8AYuI0JmPZwhX5ahOH5l9QyzXYae2alKDh/exec';
-  const studentId = new URLSearchParams(location.search).get('id') || '';
-  const prayerKeys = ['Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Fajr'];
-  let currentRecord = { Dhuhr: false, Asr: false, Maghrib: false, Isha: false, Fajr: false };
-  let isSubmitting = false; // prevent double submit
-
-  function api(action, data = {}) {
-    return new Promise((resolve, reject) => {
-      const callback = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-      const params = new URLSearchParams({ action, callback, ...data });
-      const script = document.createElement('script');
-      const timer = setTimeout(() => { cleanup(); reject(new Error('API timeout')); }, 20000);
-
-      function cleanup() {
-        clearTimeout(timer);
-        script.remove();
-        delete window[callback];
-      }
-
-      window[callback] = r => { cleanup(); resolve(r); };
-      script.onerror = () => { cleanup(); reject(new Error('API connection failed')); };
-      script.src = API_URL + '?' + params.toString();
-      document.body.appendChild(script);
-    });
-  }
-
-  // ✅ Reset button to normal state
-  function resetButton() {
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-check-circle"></i> Submit';
-    isSubmitting = false;
-  }
-
-  async function load() {
-    if (!studentId) {
-      showError('Student ID ലഭ്യമല്ല.');
-      return;
-    }
-    try {
-      const result = await api('getPrayerRecord', { studentId });
-      if (!result || !result.ok) {
-        showError(result?.message || 'Student വിവരങ്ങൾ ലഭ്യമല്ല.');
-        return;
-      }
-      render(result);
-    } catch (e) {
-      showError('Connection error. വീണ്ടും ശ്രമിക്കുക.');
-    }
-  }
-
-  function render(result) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
-    document.getElementById('studentName').textContent = result.student.name;
-    document.getElementById('studentId').textContent = result.student.id;
-    document.getElementById('studentClass').textContent = result.student.className;
-
-    const cycleEl = document.getElementById('cycle');
-    cycleEl.innerHTML = '<i class="fas fa-calendar-check"></i> Cycle: ' + escapeHtml(result.cycle.cycleDateLabel);
-
-    currentRecord = {
-      Dhuhr: !!result.record.Dhuhr,
-      Asr: !!result.record.Asr,
-      Maghrib: !!result.record.Maghrib,
-      Isha: !!result.record.Isha,
-      Fajr: !!result.record.Fajr
-    };
-
-    const container = document.getElementById('prayers');
-    container.innerHTML = '';
-
-    result.cycle.prayers.forEach(p => {
-      const locked = currentRecord[p.key] === true;
-      const div = document.createElement('div');
-      div.className = 'prayer' + (locked ? ' locked' : '');
-      const iconClass = locked ? 'fa-check-circle' : 'fa-circle';
-      div.innerHTML = `
-        <div class="prayer-info">
-          <div class="prayer-name">
-            <i class="fas ${iconClass}"></i>
-            ${escapeHtml(p.label)}
-          </div>
-          <div class="prayer-date">
-            <i class="fas fa-calendar-alt"></i>
-            ${escapeHtml(p.dateLabel)}
-          </div>
-        </div>
-        <input type="checkbox" id="${p.key}" ${locked ? 'checked disabled' : ''}>
-      `;
-      container.appendChild(div);
-    });
-
-    document.getElementById('status').textContent = '';
-    document.getElementById('status').className = 'status';
-
-    // ✅ Always reset button after render
-    resetButton();
-  }
-
-  async function submitPrayers() {
-    // prevent double submit
-    if (isSubmitting) return;
-
-    const btn = document.getElementById('submitBtn');
-    const status = document.getElementById('status');
-    const payload = { studentId };
-    let selectedNew = false;
-
-    prayerKeys.forEach(key => {
-      const checkbox = document.getElementById(key);
-      const newlySelected = checkbox && !checkbox.disabled && checkbox.checked && !currentRecord[key];
-      payload[key] = newlySelected;
-      if (newlySelected) selectedNew = true;
-    });
-
-    if (!selectedNew) {
-      status.className = 'status error';
-      status.innerHTML = '<i class="fas fa-exclamation-circle"></i> പുതിയ നിസ്കാരം തിരഞ്ഞെടുക്കപ്പെട്ടിട്ടില്ല.';
-      return;
-    }
-
-    isSubmitting = true;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-    status.className = 'status';
-    status.textContent = '';
-
-    try {
-      const result = await api('submitPrayers', payload);
-      if (!result || !result.ok) {
-        status.className = 'status error';
-        status.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + escapeHtml(result?.message || 'Save failed.');
-        resetButton(); // ✅ reset on failure
-        return;
-      }
-
-      // ✅ Success: show message and reset button IMMEDIATELY
-      status.className = 'status success';
-      status.innerHTML = '<i class="fas fa-check-circle"></i> ' + escapeHtml(result.message || 'Saved.');
-      resetButton();
-
-      // ✅ Reload data silently (without showing spinner)
-      setTimeout(() => {
-        load().catch(() => {}); // silent reload
-      }, 800);
-
-    } catch (e) {
-      status.className = 'status error';
-      status.innerHTML = '<i class="fas fa-exclamation-circle"></i> Connection error. വീണ്ടും ശ്രമിക്കുക.';
-      resetButton(); // ✅ reset on error
-    }
-  }
-
-  function showError(message) {
-    document.getElementById('loading').innerHTML = `
-      <div class="error">
-        <i class="fas fa-exclamation-triangle"></i>
-        ${escapeHtml(message)}
-      </div>
-    `;
-  }
-
-  function escapeHtml(v) {
-    return String(v ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  load();
-</script>
-</body>
-</html>
+<!doctype html>
+<html lang="ml"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b50"><title>HIMAYATHUL ISLAM MADRASA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f6fc;color:#17243a;font-family:Inter,'Noto Sans Malayalam',sans-serif}.wrap{max-width:620px;margin:auto;padding:20px 15px 45px}.hero{background:linear-gradient(135deg,#102b50,#1766a5);color:white;border-radius:26px;padding:26px 22px;box-shadow:0 15px 35px #153b6330}.brand{font-weight:800;font-size:19px;line-height:1.5}.sub{opacity:.8;font-size:12px;margin-top:4px}.profile{margin-top:20px;background:#ffffff18;border:1px solid #ffffff30;border-radius:17px;padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:center}.profile small{display:block;opacity:.75}.profile b{font-size:16px}.pill{background:#ffffff20;border-radius:30px;padding:7px 10px;font-size:12px;white-space:nowrap}.section{margin:22px 2px 12px;font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{border:0;text-align:left;background:white;border-radius:20px;padding:18px 15px;min-height:118px;box-shadow:0 5px 18px #1c3b6010;color:#17243a;cursor:pointer}.tile .ico{font-size:25px;display:block;margin-bottom:12px}.tile b{font-size:15px}.tile small{display:block;color:#738096;margin-top:4px}.panel{background:white;border-radius:20px;padding:18px;margin-top:15px;box-shadow:0 5px 18px #1c3b6010}.hidden{display:none}.back{border:0;background:#e7eef8;color:#17436e;padding:10px 14px;border-radius:12px;font-weight:700;margin-bottom:14px}.item{padding:13px 0;border-bottom:1px solid #edf1f6}.item:last-child{border:0}.muted{color:#738096;font-size:13px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.btn{border:0;background:#1766a5;color:white;padding:11px 14px;border-radius:12px;font-weight:700}.field{width:100%;padding:12px;border:1px solid #dce4ee;border-radius:11px;margin:6px 0 12px;font:inherit}.checkrow{display:flex;justify-content:space-between;padding:12px;border:1px solid #e7edf5;border-radius:13px;margin:9px 0}.notice{background:#fff8e8;border:1px solid #f6e4b9;border-radius:14px;padding:13px;margin:10px 0}.status{padding:10px 0;color:#1766a5;font-size:13px}@media(max-width:380px){.grid{gap:8px}.tile{padding:14px}.brand{font-size:16px}}
+</style></head><body><main class="wrap">
+<div class="hero"><div class="brand">☪ HIMAYATHUL ISLAM MADRASA</div><div class="sub">NADUVATHUR · STUDENT PORTAL</div><div id="profile" class="profile"><div><small>വിദ്യാർത്ഥി</small><b id="studentName">ലോഡ് ചെയ്യുന്നു...</b></div><span class="pill" id="studentMeta">—</span></div></div>
+<div id="home"><div class="section">വിദ്യാർത്ഥി സേവനങ്ങൾ</div><div class="grid">
+<button class="tile" onclick="openPage('prayer')"><span class="ico">🕌</span><b>നിസ്കാര നിരീക്ഷണം</b><small>ദൈനംദിന നിസ്കാര രേഖ</small></button>
+<button class="tile" onclick="openPage('records')"><span class="ico">📚</span><b>പഠന പ്രവർത്തനങ്ങൾ</b><small>അധ്യാപകൻ നൽകിയ ചോദ്യങ്ങൾ</small></button>
+<button class="tile" onclick="openPage('results')"><span class="ico">🏅</span><b>പരീക്ഷാ ഫലങ്ങൾ</b><small>മാർക്കും വിലയിരുത്തലും</small></button>
+<button class="tile" onclick="openPage('notices')"><span class="ico">📢</span><b>അറിയിപ്പുകൾ</b><small>മദ്റസാ അറിയിപ്പുകൾ</small></button>
+</div></div>
+<section id="page" class="panel hidden"><button class="back" onclick="goHome()">← തിരികെ</button><div id="pageBody"></div></section>
+<div id="status" class="status"></div>
+</main><script>
+const API_URL='https://script.google.com/macros/s/AKfycbzAHFgJynpZcqmwalkTPfocNu6piglgDmGRlqjfybV0CYaBNMbSN7FLOkmB0yiWR3Fa/exec';
+const id=new URLSearchParams(location.search).get('id')||'';
+let student=null,teacherToken='',isAdmin=false;
+function api(action,data={}){return new Promise((resolve,reject)=>{const cb='cb'+Date.now()+Math.floor(Math.random()*9999),s=document.createElement('script'),t=setTimeout(()=>{clean();reject(Error('API timeout'))},20000);function clean(){clearTimeout(t);s.remove();delete window[cb]}window[cb]=v=>{clean();resolve(v)};s.onerror=()=>{clean();reject(Error('API connection error'))};s.src=API_URL+'?'+new URLSearchParams({action,callback:cb,...data});document.body.appendChild(s)})}
+function msg(t){document.getElementById('status').textContent=t}
+async function init(){const q=new URLSearchParams(location.search);if(q.get('role')==='teacher'){location.replace('../admin/?role=teacher&token='+encodeURIComponent(q.get('token')||''));return}if(q.get('role')==='admin'){location.replace('../admin/?role=admin&token='+encodeURIComponent(q.get('token')||''));return}if(!id){document.getElementById('studentName').textContent='QR ID ലഭ്യമല്ല';msg('വിദ്യാർത്ഥിയുടെ QR Code വീണ്ടും സ്കാൻ ചെയ്യുക.');return}try{const r=await api('studentHome',{id});if(!r.ok)throw Error(r.message);student=r.student;document.getElementById('studentName').textContent=student.name;document.getElementById('studentMeta').textContent='ക്ലാസ് '+student.className+' · '+student.id}catch(e){msg(e.message)}}
+function goHome(){document.getElementById('home').classList.remove('hidden');document.getElementById('page').classList.add('hidden')}
+function openPage(p){document.getElementById('home').classList.add('hidden');document.getElementById('page').classList.remove('hidden');const b=document.getElementById('pageBody');b.innerHTML='<p>ലോഡ് ചെയ്യുന്നു...</p>';({prayer:loadPrayer,records:loadRecords,results:loadResults,notices:loadNotices}[p]||(()=>{}))(b)}
+async function loadPrayer(b){try{const r=await api('getPrayerRecord',{id});if(!r.ok)throw Error(r.message);b.innerHTML='<h3>🕌 നിസ്കാര നിരീക്ഷണം</h3><p class="muted">സൈക്കിൾ: '+r.cycle.cycleDateLabel+'</p>'+r.cycle.prayers.map(p=>'<label class="checkrow">'+p.label+' <input type="checkbox" id="p_'+p.key+'" '+(r.record[p.key]?'checked disabled':'')+'></label>').join('')+'<button class="btn" onclick="savePrayer()">സമർപ്പിക്കുക</button><div id="substatus" class="status"></div>'}catch(e){b.textContent=e.message}}
+async function savePrayer(){const d={id};['Dhuhr','Asr','Maghrib','Isha','Fajr'].forEach(k=>d[k]=!!document.getElementById('p_'+k)?.checked);try{const r=await api('submitPrayers',d);document.getElementById('substatus').textContent=r.message;if(r.ok)loadPrayer(document.getElementById('pageBody'))}catch(e){document.getElementById('substatus').textContent=e.message}}
+async function loadRecords(b){try{const r=await api('studentRecords',{id});if(!r.ok)throw Error(r.message);b.innerHTML='<h3>📚 പഠന പ്രവർത്തനങ്ങൾ</h3>'+(!r.records.length?'<p class="muted">ഇപ്പോൾ പ്രവർത്തനങ്ങളൊന്നുമില്ല.</p>':r.records.map(x=>'<div class="item"><b>'+esc(x.Title)+'</b><p>'+esc(x.Description||'')+'</p><small class="muted">അവസാന തീയതി: '+esc(x['Due Date']||'—')+'</small><div id="response_'+x['Record ID']+'">'+responseControl(x)+'</div></div>').join(''))}catch(e){b.textContent=e.message}}
+function responseControl(x){const idv=esc(x['Record ID']);if(x.answer)return '<p class="muted">നിങ്ങളുടെ ഉത്തരം: '+esc(x.answer)+'</p>';let type=x['Response Type'];if(type==='yesno')return '<button class="btn" onclick="sendAnswer(\''+idv+'\',\'അതെ\')">അതെ</button> <button class="btn" onclick="sendAnswer(\''+idv+'\',\'ഇല്ല\')">ഇല്ല</button>';if(type==='choice'){return '<select class="field" id="ans_'+idv+'">'+String(x.Options||'').split('|').map(v=>'<option>'+esc(v)+'</option>').join('')+'</select><button class="btn" onclick="sendAnswer(\''+idv+'\',document.getElementById(\'ans_'+idv+'\').value)">സമർപ്പിക്കുക</button>'}return '<textarea class="field" id="ans_'+idv+'" placeholder="നിങ്ങളുടെ ഉത്തരം"></textarea><button class="btn" onclick="sendAnswer(\''+idv+'\',document.getElementById(\'ans_'+idv+'\').value)">സമർപ്പിക്കുക</button>'}
+async function sendAnswer(recordId,answer){const r=await api('submitResponse',{id,recordId,answer});msg(r.message);loadRecords(document.getElementById('pageBody'))}
+async function loadResults(b){try{const r=await api('studentResults',{id});if(!r.ok)throw Error(r.message);b.innerHTML='<h3>🏅 പരീക്ഷാ ഫലങ്ങൾ</h3>'+(!r.results.length?'<p class="muted">ഫലങ്ങൾ പ്രസിദ്ധീകരിച്ചിട്ടില്ല.</p>':r.results.map(x=>'<div class="item"><b>'+esc(x.Subject||'പരീക്ഷ')+'</b><div class="row"><span>'+esc(x['Student Name'])+'</span><b>'+x.Marks+' / '+x['Max Marks']+'</b></div><small class="muted">'+esc(x.Remarks||'')+'</small></div>').join(''))}catch(e){b.textContent=e.message}}
+async function loadNotices(b){try{const r=await api('studentNotices',{id});if(!r.ok)throw Error(r.message);b.innerHTML='<h3>📢 അറിയിപ്പുകൾ</h3>'+(!r.notices.length?'<p class="muted">പുതിയ അറിയിപ്പുകളില്ല.</p>':r.notices.map(x=>'<div class="notice"><b>'+esc(x.Title)+'</b><p>'+esc(x.Message)+'</p><small class="muted">'+esc(x['Created At'])+'</small></div>').join(''))}catch(e){b.textContent=e.message}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+init();
+</script></body></html>
