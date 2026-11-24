@@ -44,7 +44,7 @@ async function loadResults(b){
     if(!r.ok)throw Error(r.message);
     const groups={};
     (Array.isArray(r.results)?r.results:[]).forEach(x=>{
-      const title=String(x['Exam Title']||'').trim();
+      const title=String(x['Exam Title']||x['Exam Name']||'').trim() || ('Exam ID: '+String(x['Exam ID']||'').slice(0,8));
       if(title)(groups[title]||(groups[title]=[])).push(x);
     });
     const order=['പാദവാർഷിക പരീക്ഷ','അർദ്ധവാർഷിക പരീക്ഷ','വാർഷിക പരീക്ഷ'];
@@ -54,8 +54,8 @@ async function loadResults(b){
       return a.localeCompare(c);
     });
     const formatMark=x=>{
-      const mark=x.Marks;
-      const max=x['Max Marks'];
+      const mark=(x.Marks!==undefined&&x.Marks!==null&&String(x.Marks).trim()!=='')?x.Marks:x.Mark;
+      const max=(x['Max Marks']!==undefined&&x['Max Marks']!==null&&String(x['Max Marks']).trim()!=='')?x['Max Marks']:x['Max Mark'];
       const hasMark=mark!==undefined&&mark!==null&&String(mark).trim()!=='';
       const hasMax=max!==undefined&&max!==null&&String(max).trim()!=='';
       if(!hasMark)return '<span class="result-empty-mark">—</span>';
